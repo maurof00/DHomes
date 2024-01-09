@@ -3,3 +3,10 @@ version: '${project.version}'
 main: it.mauro.dhomes.Main
 api-version: '1.19'
 load: STARTUP
+commands:
+  sethome:
+    description: Sets a home.
+  delhome:
+    description: Delete a home
+  home:
+    description: Go to a home.
