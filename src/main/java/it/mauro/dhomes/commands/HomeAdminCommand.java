@@ -1,4 +1,10 @@
 package it.mauro.dhomes.commands;
 
-public class HomeAdminCommand {
+import co.aikar.commands.BaseCommand;
+
+public class HomeAdminCommand extends BaseCommand {
+
+
+
+
 }

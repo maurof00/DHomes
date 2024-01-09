@@ -1,12 +1,10 @@
-package it.mauro.dhomes.commands;
+package it.mauro.dhomes.data;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.*;
+import it.mauro.dhomes.Main;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,65 +12,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@CommandAlias("home")
-public class HomeCommand extends BaseCommand {
+public class HomeManager {
 
-    private final Map<UUID, Map<String, Location>> playerHomes = new HashMap<>();
-    private final JavaPlugin plugin;
+    private static Map<UUID, Map<String, Location>> playerHomes = new HashMap<>();
 
-    public HomeCommand(JavaPlugin plugin) {
-        this.plugin = plugin;
-        loadHomes();
-    }
-
-    @Default
-    @CommandPermission("home.use")
-    public void onHome(Player player, @Optional String homeName) {
-        if (homeName == null) {
-            homeName = "default";
-        }
-
-        Location homeLocation = getHomeLocation(player, homeName);
-        if (homeLocation != null) {
-            player.teleport(homeLocation);
-            player.sendMessage("Teleported to home: " + homeName);
-        } else {
-            player.sendMessage("Home " + homeName + " not found.");
-        }
-    }
-
-    @Subcommand("sethome")
-    @CommandPermission("home.set")
-    public void onSetHome(Player player, String homeName) {
-        Location location = player.getLocation();
-        setHomeLocation(player, homeName, location);
-        saveHomes(player.getUniqueId());
-    }
-
-    @Subcommand("delhome")
-    @CommandPermission("home.delete")
-    public void onDelHome(Player player, String homeName) {
-        deleteHomeLocation(player, homeName);
-        saveHomes(player.getUniqueId());
-    }
-
-    private Location getHomeLocation(Player player, String homeName) {
+    public static Location getHomeLocation(Player player, String homeName) {
         return playerHomes.getOrDefault(player.getUniqueId(), new HashMap<>()).get(homeName);
     }
 
-    private void setHomeLocation(Player player, String homeName, Location location) {
+    public static void setHomeLocation(Player player, String homeName, Location location) {
         playerHomes.computeIfAbsent(player.getUniqueId(), k -> new HashMap<>()).put(homeName, location);
     }
 
-    private void deleteHomeLocation(Player player, String homeName) {
+    public static void deleteHomeLocation(Player player, String homeName) {
         playerHomes.computeIfPresent(player.getUniqueId(), (k, homes) -> {
             homes.remove(homeName);
             return homes.isEmpty() ? null : homes;
         });
     }
 
-    private void loadHomes() {
-        File dataFolder = plugin.getDataFolder();
+    public static void loadHomes() {
+        File dataFolder = Main.getInstance().getDataFolder();
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
         }
@@ -101,8 +61,8 @@ public class HomeCommand extends BaseCommand {
         }
     }
 
-    private void saveHomes(UUID playerUUID) {
-        File dataFolder = plugin.getDataFolder();
+    public static void saveHomes(UUID playerUUID) {
+        File dataFolder = Main.getInstance().getDataFolder();
         File homesFile = new File(dataFolder, "homes.yml");
 
         FileConfiguration homesConfig = YamlConfiguration.loadConfiguration(homesFile);
@@ -121,5 +81,5 @@ public class HomeCommand extends BaseCommand {
             e.printStackTrace();
         }
     }
-}
 
+}
