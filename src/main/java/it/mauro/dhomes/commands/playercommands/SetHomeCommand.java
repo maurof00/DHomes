@@ -1,19 +1,27 @@
 package it.mauro.dhomes.commands.playercommands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Syntax;
+import co.aikar.commands.annotation.*;
 import it.mauro.dhomes.data.HomeManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+@CommandAlias("sethome")
 public class SetHomeCommand extends BaseCommand {
-    @Syntax("sethome")
-    @CommandPermission("home.set")
-    public void onSetHome(Player player, String homeName) {
+
+    private final HomeManager homeManager;
+
+    public SetHomeCommand(HomeManager homeManager) {
+        this.homeManager = homeManager;
+    }
+
+    @Default
+    @CommandPermission("sethomes.sethome")
+    public void setHome(Player player) {
         Location location = player.getLocation();
-        HomeManager.setHomeLocation(player, homeName, location);
-        HomeManager.saveHomes(player.getUniqueId());
-        player.sendMessage("Home set.");
+        homeManager.saveHomeLocation(player, location);
+        player.sendMessage(ChatColor.GREEN + "Home set successfully!");
     }
 }
+
