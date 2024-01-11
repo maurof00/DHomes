@@ -23,7 +23,8 @@ public class HomeAdminCommand extends BaseCommand {
     public void adminCommand(CommandSender sender) {
         Player player = (Player) sender;
 
-        player.sendMessage(ChatColor.LIGHT_PURPLE+"&eHelp page");
+        player.sendMessage(ChatColor.LIGHT_PURPLE+"Help page");
+        player.sendMessage(ChatColor.LIGHT_PURPLE+" * ha list <target>");
     }
 
     @Subcommand("listhomes")
